@@ -32,6 +32,18 @@ spring:
         timeout: 3000
         writetimeout: 5000
 
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML
+    encoding: UTF-8
+    cache: false
+
+
+logging:
+  level:
+    org.thymeleaf: DEBUG
+
 application:
         security:
           jwt:
@@ -42,3 +54,5 @@ application:
         mailing:
           frontend:
             activation-url: http://localhost:4200/activate-account
+server:
+  port: 8088

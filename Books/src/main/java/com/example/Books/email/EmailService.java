@@ -3,6 +3,7 @@ package com.example.Books.email;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -18,6 +19,8 @@ import static org.springframework.mail.javamail.MimeMessageHelper.MULTIPART_MODE
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
+
 public class EmailService {
 
     private final JavaMailSender mailSender;
@@ -36,7 +39,7 @@ public class EmailService {
         if (emailTemplate == null) {
             templateName = "confirm-email";
         } else {
-            templateName = emailTemplate.name();
+            templateName = emailTemplate.name().toLowerCase();
         }
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(
@@ -53,17 +56,18 @@ public class EmailService {
         Context context = new Context();
         context.setVariables(properties);
 
-
-        helper.setFrom("Chadi@BookLink.com");
+        helper.setFrom("chadi@books.com");
         helper.setTo(to);
         helper.setSubject(subject);
 
-        String template = templateEngine.process(templateName, context); //Automaticly point to the template
-                                                                         // activate_account.html
+        String template = templateEngine.process(templateName, context);    //Automaticly point to the template
+                                                                              // activate_account.html
 
         helper.setText(template, true);
 
         mailSender.send(mimeMessage);
+
+
     }
 
 
