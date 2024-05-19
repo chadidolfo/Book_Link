@@ -30,6 +30,7 @@ import static jakarta.persistence.FetchType.EAGER;
 @Table(name = "user")
 @EntityListeners(AuditingEntityListener.class)
 public class User implements UserDetails, Principal {
+    //Principal ->AuthenticationService (116)
 
     @Id
     @GeneratedValue

@@ -26,7 +26,7 @@ public class JwtService {
 
     private long jwtExpiration;
 
-    @Value("${application.security.jwt.expiration}")
+    @Value("${application.security.jwt.secret-key}")
     private String secretKey;
 
 
@@ -109,7 +109,12 @@ public class JwtService {
 
     private Key getSignInKey() {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
+
+        if (keyBytes.length < 64) {
+            throw new IllegalArgumentException("The specified key is not secure enough. IIt must be at least 512 bits.");
+        }
         return Keys.hmacShaKeyFor(keyBytes);
+//        return Keys.hmacShaKeyFor(keyBytes);
     }
 
 

@@ -4,6 +4,7 @@ package com.example.Books.auth;
 import com.example.Books.email.EmailService;
 import com.example.Books.email.EmailTemplateName;
 import com.example.Books.role.RoleRepository;
+import com.example.Books.security.JwtService;
 import com.example.Books.user.Token;
 import com.example.Books.user.TokenRepository;
 import com.example.Books.user.User;
@@ -11,11 +12,16 @@ import com.example.Books.user.UserRepository;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -32,6 +38,10 @@ public class AuthenticationService {
 
     @Value("${application.mailing.frontend.activation-url}")
     private String activationUrl;
+
+    private final AuthenticationManager authenticationManager;  //BeansConfig
+
+    private final JwtService jwtService;
 
 
 
@@ -95,5 +105,46 @@ public class AuthenticationService {
         }
 
         return codeBuilder.toString();
+    }
+
+
+    public AuthenticationResponse authenticate(AuthenticationRequest request) {
+
+        var auth = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getEmail(),
+                        request.getPassword()
+                )
+        );
+
+        var claims = new HashMap<String, Object>();
+        var user = ((User) auth.getPrincipal());//no need to fetch it from BD  I can get user from auth
+                                                // (authenticate-> return an object type authentification)
+                                                //{ (User) auth.getPrincipal()) cast auth to a user  }
+        claims.put("fullName", user.getFullName());
+
+        var jwtToken = jwtService.generateToken(claims, (User) auth.getPrincipal());
+        return AuthenticationResponse.builder()
+                .token(jwtToken)
+                .build();
+    }
+
+    //@Transactional
+    public void activateAccount(String token) throws MessagingException {
+        Token savedToken = tokenRepository.findByToken(token) //retreive the token from BD
+                // todo exception has to be defined
+                .orElseThrow(() -> new RuntimeException("Invalid token"));
+        if (LocalDateTime.now().isAfter(savedToken.getExpiresAt())) {//هب فاث فخنثى ثءحهقثي
+            sendValidationEmail(savedToken.getUser());
+            throw new RuntimeException("Activation token has expired. A new token has been send to the same email address");
+        }
+
+        var user = userRepository.findById(savedToken.getUser().getId())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        user.setEnabled(true);
+        userRepository.save(user);
+
+        savedToken.setValidatedAt(LocalDateTime.now());
+        tokenRepository.save(savedToken);
     }
 }

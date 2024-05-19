@@ -27,6 +27,21 @@ public class AuthenticationController {
         return ResponseEntity.accepted().build();
     }
 
+
+    @PostMapping("/authenticate")
+    public ResponseEntity<AuthenticationResponse> authenticate(
+            @RequestBody AuthenticationRequest request
+    ) {
+        return ResponseEntity.ok(service.authenticate(request)); //AuthenticationResponse
+    }
+
+    @GetMapping("/activate-account")
+    public void confirm(
+            @RequestParam String token
+    ) throws MessagingException {
+        service.activateAccount(token);
+    }
+
 }
 
 
