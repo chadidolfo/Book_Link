@@ -1,5 +1,7 @@
 package com.example.Books.user;
 
+import com.example.Books.book.Book;
+import com.example.Books.history.BookTransactionHistory;
 import com.example.Books.role.Role;
 import jakarta.persistence.*;
 import lombok.*;
@@ -10,7 +12,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.awt.print.Book;
 import java.security.Principal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -46,6 +47,14 @@ public class User implements UserDetails, Principal {
 
     @ManyToMany(fetch=EAGER)
     private List<Role>roles;
+
+
+    @OneToMany(mappedBy = "owner")
+    private List<Book>books;
+
+
+    @OneToMany(mappedBy = "user")
+    private List<BookTransactionHistory> histories;
 
 
     @CreatedDate

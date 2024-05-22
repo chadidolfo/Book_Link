@@ -10,7 +10,13 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.scheduling.annotation.EnableAsync;
 
 @SpringBootApplication
-@EnableJpaAuditing
+@EnableJpaAuditing (auditorAwareRef = "auditorAware")
+                    //for lastModifiedDate & CreatedDate (BaseEntity)
+                   // code  repeated in multiple places
+                  // automatically tracking and recording changes
+		//When an entity is created or updated,
+		// JPA Auditing will call the getCurrentAuditor (ApplicationAuditAware)
+		// method to get the current user's ID and set it in the appropriate fields.
 @EnableAsync
 public class BooksApplication {
 
