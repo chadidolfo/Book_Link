@@ -1,15 +1,16 @@
-import {Component, OnInit} from '@angular/core';
-import {PageResponseBookResponse} from '../../../../services/models/page-response-book-response';
-import {BookService} from '../../../../services/services/book.service';
-import {BookResponse} from '../../../../services/models/book-response';
-import {Router} from '@angular/router';
+import { PageResponseBookResponse } from '../../../../services/models/page-response-book-response';
+import { BookService } from '../../../../services/services/book.service';
+import { BookResponse } from '../../../../services/models/book-response';
+import { Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-my-books',
   templateUrl: './my-books.component.html',
-  styleUrl: './my-books.component.scss'
+  styleUrls: ['./my-books.component.scss']
 })
-export class MyBooksComponent implements OnInit{
+export class MyBooksComponent implements OnInit {
+
   bookResponse: PageResponseBookResponse = {};
   page = 0;
   size = 5;
@@ -18,8 +19,7 @@ export class MyBooksComponent implements OnInit{
   constructor(
     private bookService: BookService,
     private router: Router
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
     this.findAllBooks();
@@ -51,7 +51,7 @@ export class MyBooksComponent implements OnInit{
   }
 
   goToPreviousPage() {
-    this.page --;
+    this.page--;
     this.findAllBooks();
   }
 
@@ -92,5 +92,4 @@ export class MyBooksComponent implements OnInit{
   editBook(book: BookResponse) {
     this.router.navigate(['books', 'manage', book.id]);
   }
-
 }
