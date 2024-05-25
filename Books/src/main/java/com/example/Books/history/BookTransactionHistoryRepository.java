@@ -35,7 +35,7 @@ public interface BookTransactionHistoryRepository extends JpaRepository<BookTran
             AND bookTransactionHistory.book.id = :bookId
             AND bookTransactionHistory.returnApproved = false
             """)
-    boolean isAlreadyBorrowedByUser(Integer bookId, Integer id);
+    boolean isAlreadyBorrowedByUser(Integer bookId, Integer userId);
 
     @Query("""
             SELECT transaction
@@ -57,5 +57,5 @@ public interface BookTransactionHistoryRepository extends JpaRepository<BookTran
             AND transaction.returned = true
             AND transaction.returnApproved = false
             """)
-    Optional<BookTransactionHistory> findByBookIdAndOwnerId(Integer bookId, Integer id);
+    Optional<BookTransactionHistory> findByBookIdAndOwnerId(Integer bookId, Integer userId);
 }

@@ -15,6 +15,6 @@ public interface BookRepository extends JpaRepository<Book,Integer >, JpaSpecifi
             AND book.shareable = true
             AND book.owner.id != :userId 
             """)
-    //to passe a parameter it's mandatory to specify column and then the attribute (:userId)
-    Page<Book> findAllDisplayableBooks(Pageable pageable, Integer id);
+    //to pass a parameter it's mandatory to specify column and then the attribute (:userId)
+    Page<Book> findAllDisplayableBooks(Pageable pageable, Integer userId);
 }
